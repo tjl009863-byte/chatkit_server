@@ -19,7 +19,7 @@ HTML = """
     <script src="https://cdn.platform.openai.com/deployments/chatkit/chatkit.js" async></script>
     <style>
       body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; }
-      #status { padding: 12px; }
+      #status { padding: 12px; color: #555; font-size: 14px; }
       #wrap { padding: 12px; }
       #box { height: 85vh; border: 1px solid #ddd; border-radius: 10px; overflow: hidden; }
       openai-chatkit { display: block; height: 100%; width: 100%; }
@@ -27,7 +27,7 @@ HTML = """
   </head>
   <body>
     <div id="wrap">
-      <div id="status">HTML loaded. Loading ChatKit…</div>
+      <div id="status">HTML geladen. Lade ChatKit…</div>
       <div id="box">
         <openai-chatkit id="my-chat"></openai-chatkit>
       </div>
@@ -44,19 +44,19 @@ HTML = """
         const status = document.getElementById('status');
         const chatkit = document.getElementById('my-chat');
 
-        // 等 chatkit.js 把 custom element 注册出来
+        // Wait for chatkit.js to register the custom element
         for (let i = 0; i < 200; i++) {
           if (chatkit && typeof chatkit.setOptions === "function") break;
           await new Promise(r => setTimeout(r, 50));
         }
 
         if (!chatkit || typeof chatkit.setOptions !== "function") {
-          status.textContent = "ChatKit not initialized. Open DevTools -> Console/Network.";
+          status.textContent = "ChatKit nicht initialisiert. Öffne DevTools -> Console/Network.";
           console.log("customElements(openai-chatkit):", customElements.get("openai-chatkit"));
           return;
         }
 
-        status.textContent = "ChatKit ready. Fetching session…";
+        status.textContent = "ChatKit bereit. Session wird erstellt…";
 
         chatkit.setOptions({
           api: {
@@ -66,10 +66,18 @@ HTML = """
               }
               return currentClientSecret;
             }
+          },
+
+          // Optional: if ChatKit supports localization for built-in UI strings
+          locale: "de",
+
+          // This controls the empty-state greeting screen
+          startScreen: {
+            greeting: "Hi, Ich bin dein Verdatherm Assistent !"
           }
         });
 
-        status.textContent = "Options set. UI should appear.";
+        status.textContent = "Optionen gesetzt. UI sollte erscheinen.";
       }
 
       boot();
